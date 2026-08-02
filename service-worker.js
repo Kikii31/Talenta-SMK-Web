@@ -13,6 +13,7 @@ const CORE_ASSETS = [
   "assets/js/data.js",
   "assets/icons/icon-192.png",
   "assets/icons/icon-512.png",
+  "favicon.ico",
   "manifest.json",
 ];
 
