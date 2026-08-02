@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.skiller_iota.twa",
+        "sha256_cert_fingerprints": ["6A:B3:44:D6:63:F5:90:2A:85:C6:3F:1E:8A:CC:E4:88:44:99:41:9F:C3:63:37:17:16:BD:74:BE:14:78:15:2E"]
+      }
+    }]
