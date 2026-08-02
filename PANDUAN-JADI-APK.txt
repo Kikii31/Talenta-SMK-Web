@@ -1,0 +1,27 @@
+PANDUAN MENJADIKAN WEBSITE SKILLER MENJADI APK
+
+1. Upload ulang folder ini ke Vercel.
+2. Pastikan URL berikut dapat dibuka:
+   https://DOMAIN-ANDA/manifest.webmanifest
+   https://DOMAIN-ANDA/sw.js
+3. Buka https://www.pwabuilder.com/
+4. Masukkan URL website Skiller yang sudah di-deploy.
+5. Tunggu pemeriksaan selesai. Manifest harus terdeteksi dan Service Worker harus aktif.
+6. Pilih Package for Stores, lalu pilih Android.
+7. Isi data aplikasi:
+   - App name: Skiller
+   - Package ID: contoh com.skiller.indonesia
+   - Version name: 1.0.0
+   - Version code: 1
+8. Unduh paket Android.
+   - APK digunakan untuk uji instalasi langsung.
+   - AAB digunakan untuk upload ke Google Play Console.
+9. Simpan signing key/keystore dengan aman. Jangan hilangkan karena dibutuhkan untuk pembaruan aplikasi.
+10. Setelah paket dibuat, pasang file assetlinks.json dari hasil PWABuilder ke:
+    /.well-known/assetlinks.json
+    lalu deploy ulang agar aplikasi dapat tampil tanpa address bar browser.
+
+CATATAN
+- Tidak ada tombol download/install yang ditambahkan ke tampilan website.
+- Website tetap tanpa database, login, dan dashboard.
+- Karena aplikasi menggunakan teknologi web, koneksi internet tetap dibutuhkan untuk data yang belum pernah dimuat, meskipun beberapa halaman dan aset dasar sudah dicache.
