@@ -44,8 +44,6 @@
       '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"></path>',
     spark:
       '<path d="m12 3-1.5 4.5L6 9l4.5 1.5L12 15l1.5-4.5L18 9l-4.5-1.5L12 3Z"></path><path d="m5 15-.8 2.2L2 18l2.2.8L5 21l.8-2.2L8 18l-2.2-.8L5 15ZM19 13l-.7 2-2 .7 2 .7.7 2 .7-2 2-.7-2-.7-.7-2Z"></path>',
-    download:
-      '<path d="M12 3v12m0 0 4-4m-4 4-4-4"></path><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>',
   };
 
   function icon(name, className = "") {
@@ -98,69 +96,54 @@
             ${icon("search")}
             <input type="search" name="q" placeholder="Cari layanan SMK (Web, Desain, RPL...)" aria-label="Cari layanan" />
           </form>
-          <button class="btn btn-outline btn-small install-btn" id="install-app-btn" type="button" hidden>
-            ${icon("download")} Install
-          </button>
           <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Buka menu">
-            ${icon("menu", "menu-open-icon")}
+            <span class="hamburger-lines" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </span>
           </button>
         </div>
       </div>
+      <button class="menu-overlay" type="button" aria-label="Tutup menu" tabindex="-1"></button>
     `;
 
     const toggle = mount.querySelector(".menu-toggle");
     const nav = mount.querySelector(".site-nav");
-    toggle?.addEventListener("click", () => {
-      const open = nav.classList.toggle("open");
+    const overlay = mount.querySelector(".menu-overlay");
+
+    const setMenuState = (open, focusMenu = false) => {
+      nav.classList.toggle("open", open);
+      overlay.classList.toggle("open", open);
+      toggle.classList.toggle("active", open);
       document.body.classList.toggle("menu-open", open);
       toggle.setAttribute("aria-expanded", String(open));
       toggle.setAttribute("aria-label", open ? "Tutup menu" : "Buka menu");
-      toggle.innerHTML = icon(open ? "close" : "menu");
+
+      if (open && focusMenu) {
+        window.setTimeout(() => nav.querySelector(".nav-link")?.focus(), 180);
+      }
+    };
+
+    toggle?.addEventListener("click", () => {
+      setMenuState(!nav.classList.contains("open"), true);
     });
+
+    overlay?.addEventListener("click", () => setMenuState(false));
 
     mount.querySelectorAll(".nav-link").forEach((link) => {
-      link.addEventListener("click", () => {
-        nav.classList.remove("open");
-        document.body.classList.remove("menu-open");
-      });
+      link.addEventListener("click", () => setMenuState(false));
     });
 
-    setupInstallButton(mount.querySelector("#install-app-btn"));
-  }
-
-  let deferredInstallPrompt = null;
-
-  function setupInstallButton(button) {
-    if (!button) return;
-
-    window.addEventListener("beforeinstallprompt", (event) => {
-      event.preventDefault();
-      deferredInstallPrompt = event;
-      button.hidden = false;
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && nav.classList.contains("open")) {
+        setMenuState(false);
+        toggle.focus();
+      }
     });
 
-    button.addEventListener("click", async () => {
-      if (!deferredInstallPrompt) return;
-      button.disabled = true;
-      deferredInstallPrompt.prompt();
-      await deferredInstallPrompt.userChoice;
-      deferredInstallPrompt = null;
-      button.hidden = true;
-      button.disabled = false;
-    });
-
-    window.addEventListener("appinstalled", () => {
-      button.hidden = true;
-      deferredInstallPrompt = null;
-    });
-  }
-
-  function registerServiceWorker() {
-    if (!("serviceWorker" in navigator)) return;
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("service-worker.js").catch(() => {
-        /* offline install support is optional; ignore failures (e.g. file:// preview) */
-      });
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 860 && nav.classList.contains("open")) {
+        setMenuState(false);
+      }
     });
   }
 
@@ -412,6 +395,49 @@
     });
   }
 
+  function setupMotion() {
+    const header = document.querySelector(".site-header");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const updateHeader = () => {
+      header?.classList.toggle("scrolled", window.scrollY > 8);
+    };
+
+    updateHeader();
+    window.addEventListener("scroll", updateHeader, { passive: true });
+
+    requestAnimationFrame(() => document.body.classList.add("page-ready"));
+
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      document.querySelectorAll("[data-reveal]").forEach((element) => {
+        element.classList.add("revealed");
+      });
+      return;
+    }
+
+    const revealTargets = document.querySelectorAll(
+      ".section-heading, .feature-card, .service-card, .step-card, .value-card, .blog-card, .detail-card, .sidebar-card, .contact-card, .form-card, .about-copy, .about-visual, .cta-inner, .hero-stat",
+    );
+
+    revealTargets.forEach((element, index) => {
+      element.setAttribute("data-reveal", "");
+      element.style.setProperty("--reveal-delay", `${(index % 4) * 70}ms`);
+    });
+
+    const observer = new IntersectionObserver(
+      (entries, revealObserver) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("revealed");
+          revealObserver.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -42px" },
+    );
+
+    revealTargets.forEach((element) => observer.observe(element));
+  }
+
   function hydrateStaticContent() {
     document
       .querySelectorAll("[data-brand]")
@@ -440,5 +466,5 @@
   setupContactForm();
   setupGlobalSearch();
   hydrateStaticContent();
-  registerServiceWorker();
+  setupMotion();
 })();

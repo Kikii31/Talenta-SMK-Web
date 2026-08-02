@@ -1,4 +1,4 @@
-# TalentaSMK - Website Statis
+# Skiller - Website Statis
 
 Website dibuat menggunakan HTML, CSS, dan JavaScript murni tanpa database, login, atau dashboard.
 
@@ -65,36 +65,10 @@ Jika array masih kosong, bagian profil tidak akan tampil pada halaman detail.
 - `blog.html` - Blog statis
 - `kontak.html` - Form kontak berbasis email
 
-## Fitur "Install App" (PWA)
+## Pembaruan tampilan mobile dan animasi
 
-Website ini sudah dijadikan **Progressive Web App (PWA)**, artinya:
-
-- Ada tombol **Install** di header yang muncul otomatis di Chrome/Edge Android maupun desktop.
-- Setelah di-install, website tampil seperti aplikasi (ada ikon di homescreen, tanpa address bar).
-- Halaman yang sudah pernah dibuka tetap bisa diakses saat offline (lihat `service-worker.js`).
-
-File yang mendukung fitur ini:
-
-- `manifest.json` — nama app, warna tema, ikon.
-- `service-worker.js` — cache offline.
-- `assets/icons/` — ikon aplikasi (192px, 512px, maskable, apple-touch-icon).
-
-**Catatan penting:** PWA ini butuh hosting HTTPS (atau `localhost`) supaya service worker aktif. Membuka langsung dari `file://` tidak akan memicu tombol Install. Gunakan Live Server, GitHub Pages, Netlify, atau hosting lain.
-
-### Cara mengganti ikon aplikasi
-
-Ganti isi file di `assets/icons/icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, dan `apple-touch-icon.png` dengan ukuran yang sama (persegi).
-
-### Cara membuat file .apk sungguhan
-
-Fitur di atas membuat website bisa **di-install seperti aplikasi**, tapi belum berbentuk file `.apk`. Untuk mendapatkan file `.apk` yang bisa dibagikan/di-upload ke Play Store, gunakan **PWABuilder** (gratis, dari Microsoft, tanpa perlu install Android Studio):
-
-1. Deploy dulu website ini ke hosting HTTPS (GitHub Pages / Netlify / Vercel, gratis semua).
-2. Buka **https://www.pwabuilder.com**.
-3. Masukkan URL website yang sudah online, klik **Start**.
-4. PWABuilder akan membaca `manifest.json` otomatis. Pastikan skor "Manifest" dan "Service Worker" hijau/centang.
-5. Klik **Package for Stores** → pilih **Android**.
-6. Isi package name (contoh: `id.sch.smkn9medan.talentasmk`), lalu klik **Generate**.
-7. Unduh file `.zip` hasilnya — di dalamnya ada `app-release-signed.apk` yang siap di-install di HP Android, atau `.aab` untuk upload ke Google Play Console.
-
-Proses ini murni membungkus website (Trusted Web Activity), jadi tidak perlu menulis kode Android sama sekali — cukup jaga `manifest.json` dan `service-worker.js` tetap ada di hosting.
+- Hamburger menu berubah menjadi ikon tutup saat dibuka.
+- Menu mobile tampil sebagai panel dari sisi kanan dengan overlay.
+- Menu dapat ditutup melalui overlay, tombol Escape, atau saat memilih navigasi.
+- Animasi masuk, efek hover kartu, hero, tombol, dan CTA dibuat ringan tanpa library tambahan.
+- Pengguna yang mengaktifkan `prefers-reduced-motion` tetap mendapatkan tampilan tanpa animasi berlebihan.

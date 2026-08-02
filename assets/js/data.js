@@ -5,9 +5,9 @@
 */
 
 window.SITE_CONFIG = {
-  brand: "TalentaSMK",
+  brand: "Skiller",
   tagline: "Jasa kreatif dan profesional dari talenta SMK Indonesia.",
-  email: "halo@talentasmk.id",
+  email: "halo@skiller.co.id",
   phone: "+62 812-3456-7890",
   whatsapp: "6281234567890",
   address: "Medan, Sumatera Utara",
